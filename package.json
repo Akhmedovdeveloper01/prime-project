@@ -1,0 +1,31 @@
+{
+  "name": "ilmhub",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1070.0",
+    "@aws-sdk/s3-request-presigner": "^3.1070.0",
+    "@supabase/supabase-js": "^2.108.2",
+    "clsx": "^2.1.0",
+    "framer-motion": "^11.0.0",
+    "lucide-react": "^0.383.0",
+    "next": "14.2.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "recharts": "^3.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5"
+  }
+}
