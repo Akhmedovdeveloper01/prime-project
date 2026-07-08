@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LogIn, Menu, X, Sparkles, LogOut, User, BookOpen } from 'lucide-react'
+import { LogIn, Menu, X, Sparkles, LogOut, User, BookOpen, Shield } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 
@@ -17,7 +17,8 @@ export default function Navbar() {
   const router = useRouter()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
-  const [session, setSession] = useState<{ user: { email?: string; user_metadata?: { full_name?: string } } } | null>(null)
+  const [session, setSession] = useState<{ user: { id: string; email?: string; user_metadata?: { full_name?: string } } } | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const profileRef = useRef<HTMLDivElement>(null)
 
@@ -26,6 +27,16 @@ export default function Navbar() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setSession(s))
     return () => subscription.unsubscribe()
   }, [])
+
+  useEffect(() => {
+    if (!session?.user) { setIsAdmin(false); return }
+    supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', session.user.id)
+      .single()
+      .then(({ data }) => setIsAdmin(data?.role === 'admin'))
+  }, [session])
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -135,6 +146,15 @@ export default function Navbar() {
                           >
                             <BookOpen className="w-4 h-4" /> Darslarim
                           </Link>
+                          {isAdmin && (
+                            <Link
+                              href="/admin"
+                              onClick={() => setProfileOpen(false)}
+                              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-brand-400 hover:text-brand-300 hover:bg-brand-500/10 transition-all"
+                            >
+                              <Shield className="w-4 h-4" /> Admin panel
+                            </Link>
+                          )}
                           <button
                             onClick={handleSignOut}
                             className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition-all"
@@ -204,6 +224,15 @@ export default function Navbar() {
                       <p className="text-xs text-white/30">Kirgansiz</p>
                       <p className="text-sm text-white font-medium truncate">{session.user?.email}</p>
                     </div>
+                    {isAdmin && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setOpen(false)}
+                        className="px-4 py-3 rounded-lg text-sm text-brand-400 hover:bg-brand-500/10 transition-colors flex items-center gap-2"
+                      >
+                        <Shield className="w-4 h-4" /> Admin panel
+                      </Link>
+                    )}
                     <button
                       onClick={() => { handleSignOut(); setOpen(false) }}
                       className="px-4 py-3 rounded-lg text-sm text-red-400 hover:bg-red-500/10 text-left transition-colors flex items-center gap-2"
