@@ -94,7 +94,7 @@ function WatchContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#05060f] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center">
         <div className="w-10 h-10 rounded-full border-2 border-brand-500 border-t-transparent animate-spin" />
       </div>
     )
@@ -102,7 +102,7 @@ function WatchContent() {
 
   if (isPaid === false) {
     return (
-      <div className="min-h-screen bg-[#05060f] text-white">
+      <div className="min-h-screen bg-[var(--bg)] text-white">
         <Navbar />
         <div className="pt-16 min-h-screen flex items-center justify-center px-4">
           <div className="text-center max-w-md">
@@ -127,7 +127,7 @@ function WatchContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#05060f] text-white">
+    <div className="min-h-screen bg-[var(--bg)] text-white">
       <Navbar />
       <div className="pt-16 min-h-screen flex flex-col">
 

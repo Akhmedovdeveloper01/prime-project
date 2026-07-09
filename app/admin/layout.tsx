@@ -15,8 +15,9 @@ import {
   LogOut,
   Menu,
   X,
-  GraduationCap,
+  PlayCircle,
 } from 'lucide-react'
+import Logo from '@/components/Logo'
 import { supabase } from '@/lib/supabase'
 import { ToastProvider } from '@/components/ui/Toast'
 
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
   { label: 'Foydalanuvchilar',   href: '/admin/users',      icon: Users },
   { label: "To'lovlar",          href: '/admin/payments',   icon: CreditCard },
   { label: 'Analitika',          href: '/admin/analytics',  icon: BarChart2 },
+  { label: 'Intro video',        href: '/admin/intro',      icon: PlayCircle },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -74,7 +76,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   /* ── Loading screen ─────────────────────────────────────── */
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#05060f] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-10 h-10 rounded-full border-2 border-brand-600 border-t-transparent animate-spin" />
           <p className="text-white/40 text-sm">Yuklanmoqda…</p>
@@ -89,13 +91,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex flex-col h-full">
         {/* Logo */}
         <div className={`flex items-center gap-3 px-4 py-5 border-b border-white/5 ${collapsed ? 'justify-center px-0' : ''}`}>
-          <div className="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center flex-shrink-0">
-            <GraduationCap className="w-4 h-4 text-white" />
-          </div>
+          <Logo size={48} className="rounded-lg flex-shrink-0" />
           {!collapsed && (
-            <span className="font-semibold text-white text-sm leading-tight">
-              IlmHub <span className="text-brand-400">Admin</span>
-            </span>
+            <span className="font-semibold text-brand-400 text-sm leading-tight">Admin</span>
           )}
         </div>
 
@@ -160,13 +158,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="min-h-screen bg-[#05060f] flex">
+    <div className="min-h-screen bg-[var(--bg)] flex">
 
       {/* ── Desktop sidebar ───────────────────────────────── */}
       <aside
         className={`
           hidden md:flex flex-col relative flex-shrink-0
-          bg-[#080a18] border-r border-white/5
+          bg-[var(--bg-sidebar)] border-r border-white/5
           transition-all duration-300 ease-in-out
           ${collapsed ? 'w-16' : 'w-64'}
         `}
@@ -178,7 +176,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           onClick={() => setCollapsed((c) => !c)}
           className="
             absolute -right-3 top-[72px] z-10
-            w-6 h-6 rounded-full bg-[#0d0f24] border border-white/10
+            w-6 h-6 rounded-full bg-[var(--bg-surface)] border border-white/10
             flex items-center justify-center
             text-white/40 hover:text-white hover:border-brand-500/50
             transition-all duration-150
@@ -214,14 +212,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              className="fixed left-0 top-0 bottom-0 w-64 bg-[#080a18] border-r border-white/5 z-50 md:hidden flex flex-col"
+              className="fixed left-0 top-0 bottom-0 w-64 bg-[var(--bg-sidebar)] border-r border-white/5 z-50 md:hidden flex flex-col"
             >
               <div className="flex items-center justify-between px-4 py-4 border-b border-white/5">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-brand-600 flex items-center justify-center">
-                    <GraduationCap className="w-3.5 h-3.5 text-white" />
-                  </div>
-                  <span className="font-semibold text-white text-sm">IlmHub <span className="text-brand-400">Admin</span></span>
+                  <Logo size={40} className="rounded-lg" />
+                  <span className="font-semibold text-brand-400 text-sm">Admin</span>
                 </div>
                 <button
                   onClick={() => setDrawerOpen(false)}
@@ -242,7 +238,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex-1 flex flex-col min-w-0">
 
         {/* Mobile header */}
-        <header className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-white/5 bg-[#080a18]">
+        <header className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-white/5 bg-[var(--bg-sidebar)]">
           <button
             onClick={() => setDrawerOpen(true)}
             className="text-white/50 hover:text-white transition-colors p-1"
@@ -251,10 +247,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-brand-600 flex items-center justify-center">
-              <GraduationCap className="w-3 h-3 text-white" />
-            </div>
-            <span className="font-semibold text-white text-sm">IlmHub <span className="text-brand-400">Admin</span></span>
+            <Logo size={36} className="rounded-md" />
+            <span className="font-semibold text-brand-400 text-sm">Admin</span>
           </div>
         </header>
 

@@ -32,7 +32,7 @@ export default function CoursesPage() {
   const startHref = loggedIn ? '/watch' : '/login?redirect=/watch'
 
   return (
-    <div className="min-h-screen bg-[#05060f] text-white">
+    <div className="min-h-screen bg-[var(--bg)] text-white">
       <Navbar />
 
       {/* Header */}

@@ -7,6 +7,7 @@ import {
   ArrowRight, Play, Star, Users, BookOpen, Award, ChevronDown,
   Zap, Globe, Shield, TrendingUp, CheckCircle2, Clock, BarChart2
 } from 'lucide-react'
+import Logo from '@/components/Logo'
 
 const courses = [
   {
@@ -111,14 +112,22 @@ export default function HomePage() {
   const y = useTransform(scrollYProgress, [0, 1], [0, 100])
   const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
   const [inView, setInView] = useState(false)
+  const [introUrl, setIntroUrl] = useState<string | null>(null)
 
   useEffect(() => {
     const timer = setTimeout(() => setInView(true), 500)
     return () => clearTimeout(timer)
   }, [])
 
+  useEffect(() => {
+    fetch('/api/intro-video')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => d?.url && setIntroUrl(d.url))
+      .catch(() => {})
+  }, [])
+
   return (
-    <div className="min-h-screen bg-[#05060f] text-white overflow-hidden">
+    <div className="min-h-screen bg-[var(--bg)] text-white overflow-hidden">
       <Navbar />
 
       {/* Hero */}
@@ -179,14 +188,14 @@ export default function HomePage() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <Link
-              href="/courses"
+              href="/login"
               className="group flex items-center gap-2 px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-base transition-all duration-300 shadow-xl shadow-brand-600/30 hover:shadow-brand-500/50 hover:-translate-y-1"
             >
               Kurslarga o'tish
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              href="/watch"
+              href="/intro"
               className="group flex items-center gap-2 px-8 py-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white font-medium text-base transition-all duration-300"
             >
               <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-brand-600/30 transition-colors">
@@ -227,6 +236,50 @@ export default function HomePage() {
           </motion.div>
         </motion.div>
       </section>
+
+      {/* Intro video section */}
+      {introUrl && (
+        <section className="relative py-24 px-4 sm:px-6 border-t border-white/5">
+          <div className="max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-10"
+            >
+              <span className="text-brand-400 text-sm font-medium uppercase tracking-widest">Tanishuv</span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-white mt-3 mb-4">Kurs haqida</h2>
+              <p className="text-white/40 max-w-xl mx-auto">Boshlashdan oldin kurs haqida qisqacha ma'lumot oling</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="relative rounded-2xl overflow-hidden bg-black aspect-video shadow-2xl shadow-brand-900/30 ring-1 ring-white/10"
+            >
+              <video src={introUrl} controls className="w-full h-full" />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="flex justify-center mt-8"
+            >
+              <Link
+                href="/login"
+                className="keep-white flex items-center gap-2 px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold transition-all duration-300 shadow-xl shadow-brand-600/30 hover:-translate-y-0.5"
+              >
+                Kursga yozilish <ArrowRight className="w-5 h-5" />
+              </Link>
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       {/* Courses section */}
       <section className="relative py-24 px-4 sm:px-6">
@@ -363,13 +416,13 @@ export default function HomePage() {
             <div className="orb w-[400px] h-[400px] bg-brand-600/20 top-[-100px] left-[-100px]" />
             <div className="orb w-[300px] h-[300px] bg-violet-600/15 bottom-[-100px] right-[-100px]" />
             <div className="relative">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Bugun boshlang</h2>
-              <p className="text-white/50 mb-8 max-w-md mx-auto">Birinchi darsni bepul ko'ring. To'lov faqat kurs davom ettirishdan oldin.</p>
+              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Bugunoq boshlang</h2>
+              <p className="text-white/50 mb-8 max-w-md mx-auto">Dissertatsiya himoyasi va xalqaro jurnallarda maqola chop etish uchun eng yaxshi kurslar.</p>
               <Link
-                href="/courses"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold transition-all duration-300 shadow-xl shadow-brand-600/30 hover:shadow-brand-500/50 hover:-translate-y-1"
+                href="/login"
+                className="keep-white inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold transition-all duration-300 shadow-xl shadow-brand-600/30 hover:shadow-brand-500/50 hover:-translate-y-1"
               >
-                Bepul boshlash <ArrowRight className="w-5 h-5" />
+                Bugunoq boshlang <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
           </motion.div>
@@ -379,8 +432,8 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t border-white/5 py-8 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="font-bold text-white text-lg">Ilm<span className="gradient-text">Hub</span></span>
-          <p className="text-white/20 text-sm">© 2025 IlmHub. Barcha huquqlar himoyalangan.</p>
+          <Logo size={64} className="rounded-lg" />
+          <p className="text-white/20 text-sm">© 2025 Primeresearch. Barcha huquqlar himoyalangan.</p>
         </div>
       </footer>
     </div>

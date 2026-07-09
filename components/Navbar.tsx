@@ -2,14 +2,16 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LogIn, Menu, X, Sparkles, LogOut, User, BookOpen, Shield } from 'lucide-react'
+import { LogIn, Menu, X, LogOut, BookOpen, Shield, Sun, Moon } from 'lucide-react'
+import { useTheme } from '@/components/ThemeProvider'
+import Logo from '@/components/Logo'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 
 const links = [
   { href: '/', label: 'Bosh sahifa' },
   { href: '/courses', label: 'Kurslar' },
-  { href: '/watch', label: 'Darslar' },
+  // { href: '/watch', label: 'Darslar' },
 ]
 
 export default function Navbar() {
@@ -60,6 +62,7 @@ export default function Navbar() {
     router.push('/')
   }
 
+  const { theme, toggle: toggleTheme } = useTheme()
   const displayName = session?.user?.user_metadata?.full_name || session?.user?.email?.split('@')[0] || 'Profil'
   const initials = displayName.slice(0, 2).toUpperCase()
 
@@ -71,7 +74,7 @@ export default function Navbar() {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 nav-blur ${
           scrolled
-            ? 'bg-[#05060f]/80 border-b border-white/5 shadow-xl shadow-black/20'
+            ? 'bg-[var(--bg)]/80 border-b border-white/5 shadow-xl shadow-black/20'
             : 'bg-transparent'
         }`}
       >
@@ -79,12 +82,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center shadow-lg shadow-brand-600/30 group-hover:shadow-brand-600/50 transition-shadow">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold text-white text-lg tracking-tight">
-                Ilm<span className="gradient-text">Hub</span>
-              </span>
+              <Logo size={64} className="rounded-lg" />
             </Link>
 
             {/* Desktop links */}
@@ -114,15 +112,21 @@ export default function Navbar() {
             {/* CTA */}
             <div className="hidden md:flex items-center gap-3">
               {session ? (
-                <div className="relative" ref={profileRef}>
+                <div className="relative flex items-center gap-2" ref={profileRef}>
+                  <button
+                    onClick={toggleTheme}
+                    className="p-2 rounded-lg text-white/40 hover:text-white/80 hover:bg-white/5 transition-all"
+                    aria-label="Toggle theme"
+                  >
+                    {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  </button>
                   <button
                     onClick={() => setProfileOpen(!profileOpen)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
+                    className="keep-white flex items-center gap-2 px-2 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
                   >
                     <div className="w-7 h-7 rounded-full bg-brand-600 flex items-center justify-center text-xs font-bold text-white">
                       {initials}
                     </div>
-                    <span className="text-sm text-white/70 max-w-[120px] truncate">{displayName}</span>
                   </button>
 
                   <AnimatePresence>
@@ -132,7 +136,7 @@ export default function Navbar() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 6, scale: 0.97 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 w-52 bg-[#0c0d1a] border border-white/10 rounded-xl shadow-xl overflow-hidden"
+                        className="absolute right-0 top-full mt-2 w-52 bg-[var(--bg-dropdown)] border border-white/10 rounded-xl shadow-xl overflow-hidden"
                       >
                         <div className="px-4 py-3 border-b border-white/5">
                           <p className="text-xs text-white/30">Tizimga kirgansiz</p>
@@ -168,14 +172,15 @@ export default function Navbar() {
                 </div>
               ) : (
                 <>
+                  <button
+                    onClick={toggleTheme}
+                    className="p-2 rounded-lg text-white/40 hover:text-white/80 hover:bg-white/5 transition-all"
+                    aria-label="Toggle theme"
+                  >
+                    {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  </button>
                   <Link href="/login" className="text-sm text-white/50 hover:text-white transition-colors flex items-center gap-1.5">
                     <LogIn className="w-4 h-4" /> Kirish
-                  </Link>
-                  <Link
-                    href="/courses"
-                    className="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium transition-all duration-200 shadow-lg shadow-brand-600/25 hover:shadow-brand-500/40 hover:-translate-y-0.5 active:translate-y-0"
-                  >
-                    Boshlash
                   </Link>
                 </>
               )}
@@ -200,7 +205,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-16 left-0 right-0 z-40 bg-[#0a0b1a]/95 nav-blur border-b border-white/5 md:hidden"
+            className="fixed top-16 left-0 right-0 z-40 bg-[var(--bg-surface)]/95 nav-blur border-b border-white/5 md:hidden"
           >
             <div className="px-4 py-4 flex flex-col gap-1">
               {links.map((link) => (
@@ -243,7 +248,6 @@ export default function Navbar() {
                 ) : (
                   <>
                     <Link href="/login" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm text-white/50 hover:text-white hover:bg-white/5 transition-colors">Kirish</Link>
-                    <Link href="/courses" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-medium text-white bg-brand-600 text-center">Boshlash</Link>
                   </>
                 )}
               </div>

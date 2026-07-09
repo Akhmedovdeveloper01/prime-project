@@ -3,7 +3,8 @@ import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { Eye, EyeOff, Sparkles, ArrowRight, Mail, Lock, User } from 'lucide-react'
+import { Eye, EyeOff, ArrowRight, Mail, Lock, User } from 'lucide-react'
+import Logo from '@/components/Logo'
 import { supabase } from '@/lib/supabase'
 
 function LoginForm() {
@@ -59,7 +60,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-[#05060f] flex items-center justify-center px-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center px-4 relative overflow-hidden">
       <div className="orb w-[500px] h-[500px] bg-brand-600/15 top-[-200px] left-[-200px]" />
       <div className="orb w-[400px] h-[400px] bg-violet-600/10 bottom-[-150px] right-[-150px]" />
       <div
@@ -80,12 +81,7 @@ function LoginForm() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center shadow-xl shadow-brand-600/30">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-white text-2xl tracking-tight">
-              Ilm<span className="gradient-text">Hub</span>
-            </span>
+            <Logo size={72} className="rounded-xl shadow-xl shadow-brand-600/30" />
           </Link>
         </div>
 
