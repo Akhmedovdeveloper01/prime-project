@@ -8,11 +8,16 @@ import Navbar from '@/components/Navbar'
 export default function IntroPage() {
   const [url, setUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [errMsg, setErrMsg] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/intro-video')
-      .then(r => r.ok ? r.json() : null)
-      .then(d => { if (d?.url) setUrl(d.url) })
+      .then(async r => {
+        const d = await r.json()
+        if (r.ok && d?.url) setUrl(d.url)
+        else setErrMsg(d?.error ?? `HTTP ${r.status}`)
+      })
+      .catch(e => setErrMsg(e.message))
       .finally(() => setLoading(false))
   }, [])
 
@@ -38,8 +43,9 @@ export default function IntroPage() {
             ) : url ? (
               <video src={url} controls autoPlay={false} className="w-full h-full" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-white/30 text-sm">
-                Intro video hali yuklanmagan
+              <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-white/30 text-sm">
+                <span>Intro video hali yuklanmagan</span>
+                {errMsg && <span className="text-red-400/60 text-xs">{errMsg}</span>}
               </div>
             )}
           </div>
