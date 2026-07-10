@@ -239,7 +239,7 @@ export default function AdminDashboardPage() {
           <motion.div
             key={key}
             variants={cardVariants}
-            className="relative bg-[#080a18] border border-white/5 rounded-2xl p-5 overflow-hidden group hover:border-white/10 transition-colors"
+            className="relative bg-[var(--bg-sidebar)] border border-white/5 rounded-2xl p-5 overflow-hidden group hover:border-white/10 transition-colors"
           >
             {/* Glow accent */}
             <div className="absolute inset-0 bg-gradient-to-br from-brand-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
@@ -275,7 +275,7 @@ export default function AdminDashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.3 }}
-          className="lg:col-span-2 bg-[#080a18] border border-white/5 rounded-2xl overflow-hidden"
+          className="lg:col-span-2 bg-[var(--bg-sidebar)] border border-white/5 rounded-2xl overflow-hidden"
         >
           <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
             <h2 className="font-semibold text-white text-sm">So'nggi to'lovlar</h2>
@@ -348,7 +348,7 @@ export default function AdminDashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.38 }}
-          className="bg-[#080a18] border border-white/5 rounded-2xl overflow-hidden"
+          className="bg-[var(--bg-sidebar)] border border-white/5 rounded-2xl overflow-hidden"
         >
           <div className="px-5 py-4 border-b border-white/5">
             <h2 className="font-semibold text-white text-sm">Tezkor havolalar</h2>

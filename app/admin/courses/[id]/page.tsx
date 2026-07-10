@@ -315,7 +315,7 @@ export default function CourseLessonsPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-2xl border border-white/8 overflow-hidden bg-[#080a18]">
+      <div className="rounded-2xl border border-white/8 overflow-hidden bg-[var(--bg-sidebar)]">
         {/* Head */}
         <div className="grid grid-cols-[3rem_1fr_8rem_7rem_9rem_10rem] gap-4 px-4 py-3
                         border-b border-white/8 bg-white/[0.03]">

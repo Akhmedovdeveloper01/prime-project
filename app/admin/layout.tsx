@@ -16,8 +16,12 @@ import {
   Menu,
   X,
   PlayCircle,
+  Sun,
+  Moon,
+  Home,
 } from 'lucide-react'
 import Logo from '@/components/Logo'
+import { useTheme } from '@/components/ThemeProvider'
 import { supabase } from '@/lib/supabase'
 import { ToastProvider } from '@/components/ui/Toast'
 
@@ -38,6 +42,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [userEmail,     setUserEmail]     = useState<string | null>(null)
   const [collapsed,     setCollapsed]     = useState(false)
   const [drawerOpen,    setDrawerOpen]    = useState(false)
+  const { theme, toggle: toggleTheme } = useTheme()
 
   /* ── Auth guard ─────────────────────────────────────────── */
   useEffect(() => {
@@ -123,7 +128,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {!collapsed && <span>{label}</span>}
                 {collapsed && (
                   <span className="
-                    absolute left-full ml-2 px-2 py-1 rounded-md bg-gray-800 text-white text-xs
+                    absolute left-full ml-2 px-2 py-1 rounded-md bg-[var(--bg-dropdown)] border border-white/10 text-white text-xs
                     whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none
                     transition-opacity duration-150 z-50
                   ">
@@ -136,22 +141,33 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
 
         {/* User + Sign out */}
-        <div className={`border-t border-white/5 p-3 ${collapsed ? 'flex flex-col items-center' : ''}`}>
+        <div className={`border-t border-white/5 p-3 ${collapsed ? 'flex flex-col items-center gap-1' : ''}`}>
           {!collapsed && userEmail && (
             <p className="text-white/30 text-xs truncate px-1 mb-2">{userEmail}</p>
           )}
-          <button
-            onClick={handleSignOut}
-            className={`
-              flex items-center gap-2 text-sm text-white/40 hover:text-red-400 transition-colors
-              px-3 py-2 rounded-lg hover:bg-red-500/10 w-full
-              ${collapsed ? 'justify-center px-2' : ''}
-            `}
-            title={collapsed ? 'Chiqish' : undefined}
-          >
-            <LogOut className="w-4 h-4 flex-shrink-0" />
-            {!collapsed && <span>Chiqish</span>}
-          </button>
+          <div className="flex items-center justify-around">
+            <Link
+              href="/"
+              className="p-2 rounded-lg text-white/40 hover:text-white/80 hover:bg-white/5 transition-all"
+              title="Saytga qaytish"
+            >
+              <Home className="w-4 h-4" />
+            </Link>
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg text-white/40 hover:text-white/80 hover:bg-white/5 transition-all"
+              title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+            <button
+              onClick={handleSignOut}
+              className="p-2 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-500/10 transition-all"
+              title="Chiqish"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -246,10 +262,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           >
             <Menu className="w-5 h-5" />
           </button>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-1">
             <Logo size={36} className="rounded-md" />
             <span className="font-semibold text-brand-400 text-sm">Admin</span>
           </div>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg text-white/40 hover:text-white/80 hover:bg-white/5 transition-all"
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </header>
 
         <main className="flex-1 overflow-y-auto">

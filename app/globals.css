@@ -96,40 +96,51 @@ body {
   color: rgb(255 255 255) !important;
 }
 
+/* ── Dark mode: boost faint white opacities ─────────────── */
+:root .text-white\/10, [data-theme="dark"] .text-white\/10 { color: rgba(255,255,255,0.22) !important; }
+:root .text-white\/20, [data-theme="dark"] .text-white\/20 { color: rgba(255,255,255,0.35) !important; }
+:root .text-white\/25, [data-theme="dark"] .text-white\/25 { color: rgba(255,255,255,0.42) !important; }
+:root .text-white\/30, [data-theme="dark"] .text-white\/30 { color: rgba(255,255,255,0.52) !important; }
+:root .text-white\/40, [data-theme="dark"] .text-white\/40 { color: rgba(255,255,255,0.62) !important; }
+:root .text-white\/50, [data-theme="dark"] .text-white\/50 { color: rgba(255,255,255,0.72) !important; }
+:root .text-white\/60, [data-theme="dark"] .text-white\/60 { color: rgba(255,255,255,0.80) !important; }
+:root .text-white\/70, [data-theme="dark"] .text-white\/70 { color: rgba(255,255,255,0.87) !important; }
+:root .text-white\/80, [data-theme="dark"] .text-white\/80 { color: rgba(255,255,255,0.93) !important; }
+
 /* ── Light mode: white → dark text overrides ─────────────── */
-[data-theme="light"] .text-white    { color: #111827 !important; }
-[data-theme="light"] .text-white\/10 { color: rgba(17,24,39,0.10) !important; }
-[data-theme="light"] .text-white\/20 { color: rgba(17,24,39,0.20) !important; }
-[data-theme="light"] .text-white\/25 { color: rgba(17,24,39,0.25) !important; }
-[data-theme="light"] .text-white\/30 { color: rgba(17,24,39,0.30) !important; }
-[data-theme="light"] .text-white\/40 { color: rgba(17,24,39,0.40) !important; }
-[data-theme="light"] .text-white\/50 { color: rgba(17,24,39,0.50) !important; }
-[data-theme="light"] .text-white\/60 { color: rgba(17,24,39,0.60) !important; }
-[data-theme="light"] .text-white\/70 { color: rgba(17,24,39,0.70) !important; }
-[data-theme="light"] .text-white\/80 { color: rgba(17,24,39,0.80) !important; }
+[data-theme="light"] .text-white     { color: #111827 !important; }
+[data-theme="light"] .text-white\/10 { color: rgba(17,24,39,0.25) !important; }
+[data-theme="light"] .text-white\/20 { color: rgba(17,24,39,0.40) !important; }
+[data-theme="light"] .text-white\/25 { color: rgba(17,24,39,0.50) !important; }
+[data-theme="light"] .text-white\/30 { color: rgba(17,24,39,0.55) !important; }
+[data-theme="light"] .text-white\/40 { color: rgba(17,24,39,0.65) !important; }
+[data-theme="light"] .text-white\/50 { color: rgba(17,24,39,0.75) !important; }
+[data-theme="light"] .text-white\/60 { color: rgba(17,24,39,0.82) !important; }
+[data-theme="light"] .text-white\/70 { color: rgba(17,24,39,0.88) !important; }
+[data-theme="light"] .text-white\/80 { color: rgba(17,24,39,0.94) !important; }
 
 [data-theme="light"] .hover\:text-white:hover       { color: #111827 !important; }
-[data-theme="light"] .hover\:text-white\/50:hover   { color: rgba(17,24,39,0.50) !important; }
-[data-theme="light"] .hover\:text-white\/80:hover   { color: rgba(17,24,39,0.80) !important; }
+[data-theme="light"] .hover\:text-white\/50:hover   { color: rgba(17,24,39,0.75) !important; }
+[data-theme="light"] .hover\:text-white\/80:hover   { color: rgba(17,24,39,0.94) !important; }
 [data-theme="light"] .group:hover .group-hover\:text-white { color: #111827 !important; }
 
 /* ── Light mode: border overrides ───────────────────────── */
-[data-theme="light"] .border-white\/3  { border-color: rgba(17,24,39,0.03) !important; }
-[data-theme="light"] .border-white\/5  { border-color: rgba(17,24,39,0.05) !important; }
-[data-theme="light"] .border-white\/8  { border-color: rgba(17,24,39,0.08) !important; }
-[data-theme="light"] .border-white\/10 { border-color: rgba(17,24,39,0.10) !important; }
-[data-theme="light"] .border-white\/20 { border-color: rgba(17,24,39,0.20) !important; }
-[data-theme="light"] .border-white\/30 { border-color: rgba(17,24,39,0.30) !important; }
+[data-theme="light"] .border-white\/3  { border-color: rgba(17,24,39,0.06) !important; }
+[data-theme="light"] .border-white\/5  { border-color: rgba(17,24,39,0.10) !important; }
+[data-theme="light"] .border-white\/8  { border-color: rgba(17,24,39,0.14) !important; }
+[data-theme="light"] .border-white\/10 { border-color: rgba(17,24,39,0.15) !important; }
+[data-theme="light"] .border-white\/20 { border-color: rgba(17,24,39,0.25) !important; }
+[data-theme="light"] .border-white\/30 { border-color: rgba(17,24,39,0.35) !important; }
 
-[data-theme="light"] .hover\:border-white\/20:hover { border-color: rgba(17,24,39,0.20) !important; }
+[data-theme="light"] .hover\:border-white\/20:hover { border-color: rgba(17,24,39,0.25) !important; }
 
 /* ── Light mode: bg-white/* overrides ───────────────────── */
-[data-theme="light"] .bg-white\/3  { background-color: rgba(17,24,39,0.03) !important; }
-[data-theme="light"] .bg-white\/5  { background-color: rgba(17,24,39,0.05) !important; }
-[data-theme="light"] .bg-white\/10 { background-color: rgba(17,24,39,0.07) !important; }
+[data-theme="light"] .bg-white\/3  { background-color: rgba(17,24,39,0.04) !important; }
+[data-theme="light"] .bg-white\/5  { background-color: rgba(17,24,39,0.06) !important; }
+[data-theme="light"] .bg-white\/10 { background-color: rgba(17,24,39,0.09) !important; }
 
-[data-theme="light"] .hover\:bg-white\/5:hover  { background-color: rgba(17,24,39,0.05) !important; }
-[data-theme="light"] .hover\:bg-white\/10:hover { background-color: rgba(17,24,39,0.07) !important; }
+[data-theme="light"] .hover\:bg-white\/5:hover  { background-color: rgba(17,24,39,0.06) !important; }
+[data-theme="light"] .hover\:bg-white\/10:hover { background-color: rgba(17,24,39,0.09) !important; }
 
 /* ── Progress bar ────────────────────────────────────────── */
 @keyframes progressGrow {

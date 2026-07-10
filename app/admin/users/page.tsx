@@ -250,7 +250,7 @@ export default function UsersPage() {
             "
           >
             {FILTER_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value} className="bg-[#0c0d1a]">
+              <option key={opt.value} value={opt.value} className="bg-[var(--bg-dropdown)]">
                 {opt.label}
               </option>
             ))}
@@ -427,7 +427,7 @@ export default function UsersPage() {
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md bg-[#0c0d1a] border border-white/10 rounded-2xl p-6"
+            className="w-full max-w-md bg-[var(--bg-dropdown)] border border-white/10 rounded-2xl p-6"
           >
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-base font-semibold text-white">Yangi foydalanuvchi</h2>
