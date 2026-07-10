@@ -22,9 +22,9 @@ import { toast } from '@/components/ui/Toast'
 
 /* ── helpers ──────────────────────────────────────────────────────── */
 
-async function getToken(): Promise<string | null> {
+async function getToken(): Promise<string> {
   const { data: { session } } = await supabase.auth.getSession()
-  return session?.access_token ?? null
+  return session?.access_token ?? ''
 }
 
 /* ── types ────────────────────────────────────────────────────────── */
@@ -226,29 +226,41 @@ export default function CourseLessonsPage() {
     try {
       const token = await getToken()
 
-      // Fayl server orqali R2 ga yuklanadi (CORS muammosi bo'lmaydi)
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('courseId', courseId)
-      formData.append('lessonId', lessonId)
-
-      // Progress simulatsiya (server upload uchun real progress yo'q)
-      const timer = setInterval(() => {
-        setUploads((prev) => {
-          const cur = prev[lessonId]?.progress ?? 0
-          if (cur >= 90) { clearInterval(timer); return prev }
-          return { ...prev, [lessonId]: { ...prev[lessonId], progress: cur + 5 } }
-        })
-      }, 300)
-
-      const res = await fetch('/api/admin/upload', {
+      // 1. Presigned URL olish
+      const urlRes = await fetch('/api/admin/upload-url', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courseId, lessonId, contentType: file.type || 'video/mp4' }),
+      })
+      if (!urlRes.ok) throw new Error('Upload URL olinmadi')
+      const { uploadUrl, key } = await urlRes.json()
+
+      // 2. Brauzerdan to'g'ridan-to'g'ri R2 ga yuklash (real progress)
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest()
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const pct = Math.round((e.loaded / e.total) * 100)
+            setUploads((prev) => ({
+              ...prev,
+              [lessonId]: { lessonId, progress: pct, status: 'uploading' },
+            }))
+          }
+        }
+        xhr.onload = () => xhr.status < 300 ? resolve() : reject(new Error(`R2 xato: ${xhr.status}`))
+        xhr.onerror = () => reject(new Error('Tarmoq xatosi'))
+        xhr.open('PUT', uploadUrl)
+        xhr.setRequestHeader('Content-Type', file.type || 'video/mp4')
+        xhr.send(file)
       })
 
-      clearInterval(timer)
-      if (!res.ok) throw new Error(await res.text())
+      // 3. video_key ni saqlash
+      const patchRes = await fetch(`/api/admin/lessons?id=${lessonId}`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ video_key: key }),
+      })
+      if (!patchRes.ok) throw new Error('video_key saqlanmadi')
 
       setUploads((prev) => ({
         ...prev,
@@ -257,7 +269,6 @@ export default function CourseLessonsPage() {
       toast('Video muvaffaqiyatli yuklandi')
       fetchLessons()
 
-      /* clear done state after a few seconds */
       setTimeout(() => {
         setUploads((prev) => {
           const next = { ...prev }
