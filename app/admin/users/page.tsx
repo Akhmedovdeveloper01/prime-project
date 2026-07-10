@@ -282,7 +282,7 @@ export default function UsersPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-white/5">
-                  {['№', 'Ism', 'Email', "Ro'yxatdan o'tgan", "To'lov holati", 'Amallar'].map(
+                  {['№', 'Ism', 'Email', 'Role', "Ro'yxatdan o'tgan", "To'lov holati", 'Amallar'].map(
                     (col) => (
                       <th
                         key={col}
@@ -315,6 +315,19 @@ export default function UsersPage() {
                     {/* Email */}
                     <td className="px-4 py-3.5 text-white/50">
                       {user.email ?? '—'}
+                    </td>
+
+                    {/* Role */}
+                    <td className="px-4 py-3.5">
+                      {user.role === 'admin' ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-600/15 text-brand-300 text-xs font-medium">
+                          Admin
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/6 text-white/40 text-xs font-medium">
+                          Student
+                        </span>
+                      )}
                     </td>
 
                     {/* Ro'yxatdan o'tgan */}
