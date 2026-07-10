@@ -82,27 +82,34 @@ export async function getUserFromRequest(req: Request) {
 
 /** Foydalanuvchi admin ekanligini tekshiradi */
 export async function requireAdmin(req: Request) {
+  const token = req.headers.get('authorization')?.replace('Bearer ', '')
+  console.log('[requireAdmin] token:', token ? token.slice(0, 30) + '...' : 'YOQ')
+
   const user = await getUserFromRequest(req)
+  console.log('[requireAdmin] user:', user?.id ?? 'NULL')
+
   if (!user) return null
-  const { data: profile } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from('profiles')
     .select('role')
     .eq('id', user.id)
-    .single()
-  return profile?.role === 'admin' ? user : null
+  console.log('[requireAdmin] profile data:', data, 'error:', error)
+
+  const role = (data as { role: string }[] | null)?.[0]?.role
+  console.log('[requireAdmin] role:', role)
+  return role === 'admin' ? user : null
 }
 
 /** Foydalanuvchi login + to'lagan ekanligini tekshiradi */
 export async function requirePaidUser(req: Request) {
   const user = await getUserFromRequest(req)
   if (!user) return null
-  const { data: profile } = await supabaseAdmin
+  const { data } = await supabaseAdmin
     .from('profiles')
     .select('is_paid, role')
     .eq('id', user.id)
-    .single()
+  const profile = (data as { is_paid: boolean; role: string }[] | null)?.[0]
   if (!profile) return null
-  // Admin ham videolarni ko'ra oladi
   if (profile.role === 'admin' || profile.is_paid) return user
   return null
 }

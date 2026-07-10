@@ -28,7 +28,7 @@ export function Modal({ open, onClose, title, children, maxWidth = 'max-w-md' }:
             exit={{ scale: 0.95, y: 16 }}
             transition={{ duration: 0.2 }}
             onClick={(e) => e.stopPropagation()}
-            className={`w-full ${maxWidth} bg-[#0c0d1a] border border-white/10 rounded-2xl p-6 shadow-2xl`}
+            className={`w-full ${maxWidth} bg-[var(--bg-surface)] border border-white/10 rounded-2xl p-6 shadow-2xl`}
           >
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-base font-semibold text-white">{title}</h2>

@@ -124,6 +124,10 @@ body {
 [data-theme="light"] .hover\:text-white\/80:hover   { color: rgba(17,24,39,0.94) !important; }
 [data-theme="light"] .group:hover .group-hover\:text-white { color: #111827 !important; }
 
+/* ── Light mode: placeholder overrides ──────────────────── */
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder { color: rgba(17,24,39,0.45) !important; }
+
 /* ── Light mode: border overrides ───────────────────────── */
 [data-theme="light"] .border-white\/3  { border-color: rgba(17,24,39,0.06) !important; }
 [data-theme="light"] .border-white\/5  { border-color: rgba(17,24,39,0.10) !important; }

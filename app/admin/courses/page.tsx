@@ -26,9 +26,9 @@ function formatPrice(price: number) {
   return price.toLocaleString('uz-UZ') + ' so\'m'
 }
 
-async function getToken(): Promise<string | null> {
+async function getToken(): Promise<string> {
   const { data: { session } } = await supabase.auth.getSession()
-  return session?.access_token ?? null
+  return session?.access_token ?? ''
 }
 
 /* ── types ────────────────────────────────────────────────────────── */
