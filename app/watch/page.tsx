@@ -68,8 +68,8 @@ function WatchContent() {
         .eq('course_id', courseId)
         .order('order_index', { ascending: true })
 
-      const coursesData = (courseArr as unknown[] | null)?.[0] ?? null
-      if (coursesData) setCourse(coursesData as typeof coursesData)
+      const coursesData = (courseArr as Course[] | null)?.[0] ?? null
+      if (coursesData) setCourse(coursesData)
       if (lessonsData?.length) {
         // Takroriy IDlarni olib tashlaymiz
         const unique = lessonsData.filter(
