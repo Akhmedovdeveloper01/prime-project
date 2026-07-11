@@ -11,6 +11,6 @@ export default function Logo({ size = 48, className = '' }: LogoProps) {
   const { theme } = useTheme()
   const src = theme === 'light' ? '/logo-light.png' : '/logo-dark.png'
   return (
-    <Image src={src} alt="IlmHub" width={size} height={size} className={className} />
+    <Image src={src} alt="Primeresearch" width={size} height={size} className={className} />
   )
 }

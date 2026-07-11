@@ -3,7 +3,7 @@ import './globals.css'
 import { ThemeProvider } from '@/components/ThemeProvider'
 
 export const metadata: Metadata = {
-  title: 'IlmHub — SCOPUS & PhD Kurslar',
+  title: 'Primeresearch — SCOPUS & PhD Kurslar',
   description: 'Xalqaro ilmiy maqola yozish va PhD tayyorlash uchun professional kurslar',
 }
 
