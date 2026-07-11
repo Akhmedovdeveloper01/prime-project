@@ -28,26 +28,26 @@ function WatchContent() {
       if (!session) { router.push('/login?redirect=/watch'); return }
 
       // is_paid va role tekshiruvi
-      const { data: profile } = await supabase
+      const { data: profileData } = await supabase
         .from('profiles')
         .select('is_paid, role')
         .eq('id', session.user.id)
-        .maybeSingle()
 
+      const profile = (profileData as { is_paid: boolean; role: string }[] | null)?.[0]
       const paid = profile?.is_paid === true || profile?.role === 'admin'
       setIsPaid(paid)
       if (!paid) { setLoading(false); return }
 
       if (!courseId) {
         // courseId yo'q — birinchi kursni olamiz
-        const { data: firstCourse } = await supabase
+        const { data: firstCourseData } = await supabase
           .from('courses')
           .select('id')
           .eq('is_published', true)
           .order('created_at', { ascending: true })
           .limit(1)
-          .maybeSingle()
 
+        const firstCourse = (firstCourseData as { id: string }[] | null)?.[0]
         if (firstCourse) {
           router.replace(`/watch?courseId=${firstCourse.id}`)
         } else {
@@ -57,11 +57,10 @@ function WatchContent() {
       }
 
       // Kurs va darslarni DB dan olamiz
-      const { data: coursesData } = await supabase
+      const { data: courseArr } = await supabase
         .from('courses')
         .select('*')
         .eq('id', courseId)
-        .maybeSingle()
 
       const { data: lessonsData } = await supabase
         .from('lessons')
@@ -69,7 +68,8 @@ function WatchContent() {
         .eq('course_id', courseId)
         .order('order_index', { ascending: true })
 
-      if (coursesData) setCourse(coursesData)
+      const coursesData = (courseArr as unknown[] | null)?.[0] ?? null
+      if (coursesData) setCourse(coursesData as typeof coursesData)
       if (lessonsData?.length) {
         // Takroriy IDlarni olib tashlaymiz
         const unique = lessonsData.filter(
@@ -155,24 +155,17 @@ function WatchContent() {
           {/* Video area */}
           <div className="flex-1 flex flex-col gap-4">
             {activeId && (
-              <motion.div
-                key={activeId}
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4 }}
-              >
-                <VideoPlayer
-                  lessonId={activeId}
-                  title={activeLesson?.title}
-                  totalSeconds={activeLesson?.duration
-                    ? (() => {
-                        const [m, s] = activeLesson.duration!.split(':').map(Number)
-                        return (m || 0) * 60 + (s || 0)
-                      })()
-                    : 0
-                  }
-                />
-              </motion.div>
+              <VideoPlayer
+                lessonId={activeId}
+                title={activeLesson?.title}
+                totalSeconds={activeLesson?.duration
+                  ? (() => {
+                      const [m, s] = activeLesson.duration!.split(':').map(Number)
+                      return (m || 0) * 60 + (s || 0)
+                    })()
+                  : 0
+                }
+              />
             )}
 
             {/* Video info */}
@@ -223,7 +216,7 @@ function WatchContent() {
               </div>
               <div className="max-h-[60vh] lg:max-h-[70vh] overflow-y-auto">
                 {lessons.map((lesson, i) => {
-                  const accessible = lesson.is_free || activeId === lesson.id
+                  const accessible = isPaid || lesson.is_free
                   return (
                     <motion.button
                       key={lesson.id}

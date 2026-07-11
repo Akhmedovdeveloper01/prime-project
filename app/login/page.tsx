@@ -10,7 +10,7 @@ import { supabase } from '@/lib/supabase'
 function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirect = searchParams.get('redirect') ?? '/watch'
+  const redirect = searchParams.get('redirect') ?? '/courses'
 
   const [tab, setTab] = useState<'login' | 'register'>('login')
   const [show, setShow] = useState(false)
