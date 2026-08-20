@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import VideoPlayer from '@/components/VideoPlayer'
 import { supabase, type Lesson, type Course } from '@/lib/supabase'
@@ -19,24 +20,29 @@ function WatchContent() {
   const [showCert, setShowCert] = useState(false)
   const [loading, setLoading] = useState(true)
   const [isPaid, setIsPaid] = useState<boolean | null>(null)
+  const [hasSession, setHasSession] = useState(false)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Auth tekshiruvi + ma'lumotlar yuklash
+  // Auth tekshiruvi (ixtiyoriy) + ma'lumotlar yuklash.
+  // Login qilmagan foydalanuvchi ham sahifaga kiradi — faqat bepul (is_free) darslarni ko'ra oladi,
+  // qolganlari qulflangan holda ko'rinadi va bosilsa login/registerga yo'naltiriladi.
   useEffect(() => {
     async function init() {
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { router.push('/login?redirect=/watch'); return }
+      setHasSession(!!session)
 
-      // is_paid va role tekshiruvi
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('is_paid, role')
-        .eq('id', session.user.id)
+      let paid = false
+      if (session) {
+        // is_paid va role tekshiruvi
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('is_paid, role')
+          .eq('id', session.user.id)
 
-      const profile = (profileData as { is_paid: boolean; role: string }[] | null)?.[0]
-      const paid = profile?.is_paid === true || profile?.role === 'admin'
+        const profile = (profileData as { is_paid: boolean; role: string }[] | null)?.[0]
+        paid = profile?.is_paid === true || profile?.role === 'admin'
+      }
       setIsPaid(paid)
-      if (!paid) { setLoading(false); return }
 
       if (!courseId) {
         // courseId yo'q — birinchi kursni olamiz
@@ -56,7 +62,7 @@ function WatchContent() {
         return
       }
 
-      // Kurs va darslarni DB dan olamiz
+      // Kurs va darslarni DB dan olamiz (video_key bu yerda tanlanmaydi — u faqat /api/video orqali beriladi)
       const { data: courseArr } = await supabase
         .from('courses')
         .select('*')
@@ -64,7 +70,7 @@ function WatchContent() {
 
       const { data: lessonsData } = await supabase
         .from('lessons')
-        .select('*')
+        .select('id, course_id, title, duration, order_index, is_free, created_at')
         .eq('course_id', courseId)
         .order('order_index', { ascending: true })
 
@@ -72,11 +78,13 @@ function WatchContent() {
       if (coursesData) setCourse(coursesData)
       if (lessonsData?.length) {
         // Takroriy IDlarni olib tashlaymiz
-        const unique = lessonsData.filter(
+        const unique = (lessonsData as Lesson[]).filter(
           (l, i, arr) => arr.findIndex(x => x.id === l.id) === i
         )
         setLessons(unique)
-        setActiveId(unique[0].id)
+        // Ochiq (bepul yoki to'langan) birinchi darsni tanlaymiz
+        const firstAccessible = unique.find(l => paid || l.is_free) ?? unique[0]
+        setActiveId(firstAccessible.id)
       }
       setLoading(false)
     }
@@ -100,31 +108,10 @@ function WatchContent() {
     )
   }
 
-  if (isPaid === false) {
-    return (
-      <div className="min-h-screen bg-[var(--bg)] text-white">
-        <Navbar />
-        <div className="pt-16 min-h-screen flex items-center justify-center px-4">
-          <div className="text-center max-w-md">
-            <div className="w-20 h-20 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-6">
-              <ShieldAlert className="w-10 h-10 text-amber-400" />
-            </div>
-            <h1 className="text-2xl font-bold text-white mb-3">Ruxsat kutilmoqda</h1>
-            <p className="text-white/40 text-sm leading-relaxed mb-6">
-              Kursga kirish uchun to&apos;lov tasdiqlangan bo&apos;lishi kerak.
-              Admin siz uchun parol yaratib beradi va email orqali xabar qiladi.
-            </p>
-            <button
-              onClick={() => supabase.auth.signOut().then(() => router.push('/'))}
-              className="px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white text-sm font-medium transition-all"
-            >
-              Chiqish
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  const loginHref = `/login?redirect=${encodeURIComponent(
+    courseId ? `/watch?courseId=${courseId}` : '/watch'
+  )}`
+  const activeAccessible = activeLesson ? (isPaid || activeLesson.is_free) : false
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-white">
@@ -154,7 +141,7 @@ function WatchContent() {
 
           {/* Video area */}
           <div className="flex-1 flex flex-col gap-4">
-            {activeId && (
+            {activeId && activeAccessible && (
               <VideoPlayer
                 lessonId={activeId}
                 title={activeLesson?.title}
@@ -166,6 +153,38 @@ function WatchContent() {
                   : 0
                 }
               />
+            )}
+
+            {activeId && !activeAccessible && (
+              <div className="w-full aspect-video bg-black rounded-none lg:rounded-2xl flex items-center justify-center">
+                <div className="text-center max-w-sm px-6">
+                  <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-5">
+                    <ShieldAlert className="w-8 h-8 text-amber-400" />
+                  </div>
+                  {hasSession ? (
+                    <>
+                      <h2 className="text-lg font-semibold text-white mb-2">Ruxsat kutilmoqda</h2>
+                      <p className="text-white/40 text-sm leading-relaxed">
+                        Bu darsni ko&apos;rish uchun to&apos;lov tasdiqlangan bo&apos;lishi kerak.
+                        Admin siz uchun ruxsatni tasdiqlaydi.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <h2 className="text-lg font-semibold text-white mb-2">Bu dars qulflangan</h2>
+                      <p className="text-white/40 text-sm leading-relaxed mb-5">
+                        Ushbu darsni ko&apos;rish uchun ro&apos;yxatdan o&apos;ting yoki tizimga kiring.
+                      </p>
+                      <Link
+                        href={loginHref}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium transition-colors"
+                      >
+                        Kirish / Ro&apos;yxatdan o&apos;tish
+                      </Link>
+                    </>
+                  )}
+                </div>
+              </div>
             )}
 
             {/* Video info */}
@@ -220,7 +239,12 @@ function WatchContent() {
                   return (
                     <motion.button
                       key={lesson.id}
-                      onClick={() => accessible && setActiveId(lesson.id)}
+                      onClick={() => {
+                        if (accessible) { setActiveId(lesson.id); return }
+                        if (!hasSession) { router.push(loginHref); return }
+                        // Login qilgan lekin to'lamagan foydalanuvchi — sababini ko'rsatamiz
+                        setActiveId(lesson.id)
+                      }}
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.04, duration: 0.4 }}
@@ -228,7 +252,7 @@ function WatchContent() {
                         activeId === lesson.id
                           ? 'bg-brand-600/15 border-l-2 border-l-brand-500'
                           : 'hover:bg-white/3'
-                      } ${!accessible ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      } ${!accessible ? 'opacity-50' : ''}`}
                     >
                       <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs ${
                         activeId === lesson.id

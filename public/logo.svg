@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" width="960" height="720">
+  <!-- Prime Research logo — transparent background, white artwork -->
+  <g fill="none" stroke="#FFFFFF" stroke-linecap="round">
+
+    <!-- Magnifying glass circle (with gaps top-right and lower-left for the chart line) -->
+    <path d="M 545,105
+             A 155,155 0 1 0 588,300"
+          stroke-width="26"/>
+
+    <!-- Magnifier handle -->
+    <line x1="565" y1="330" x2="630" y2="395" stroke-width="34"/>
+
+    <!-- Chart line -->
+    <polyline points="352,315 415,235 500,270 570,180"
+              stroke-width="22" stroke-linejoin="round"/>
+
+    <!-- Chart dots -->
+    <g fill="#FFFFFF" stroke="none">
+      <circle cx="415" cy="235" r="27"/>
+      <circle cx="500" cy="270" r="27"/>
+      <circle cx="570" cy="180" r="33"/>
+    </g>
+  </g>
+
+  <!-- Wordmark -->
+  <g fill="#FFFFFF" font-family="Montserrat, 'Century Gothic', Futura, Arial, sans-serif">
+    <text x="480" y="530" text-anchor="middle"
+          font-size="110" font-weight="500" letter-spacing="42">PRIME</text>
+    <text x="480" y="620" text-anchor="middle"
+          font-size="52" font-weight="400" letter-spacing="30">RESEARCH</text>
+  </g>
+</svg>

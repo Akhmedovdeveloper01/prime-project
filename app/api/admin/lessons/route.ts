@@ -69,9 +69,20 @@ export async function PATCH(req: NextRequest) {
   if (!id) return NextResponse.json({ error: 'id majburiy' }, { status: 400 })
 
   const body = await req.json().catch(() => null)
+  if (!body) return NextResponse.json({ error: 'Noto\'g\'ri so\'rov' }, { status: 400 })
+
+  // Faqat lessons jadvalidagi ustunlarni yangilaymiz — boshqa kalitlar (masalan courseId)
+  // schema xatosiga sabab bo'lmasligi kerak.
+  const updates: Record<string, unknown> = {}
+  if (body.title !== undefined) updates.title = body.title
+  if (body.duration !== undefined) updates.duration = body.duration
+  if (body.is_free !== undefined) updates.is_free = body.is_free
+  if (body.video_key !== undefined) updates.video_key = body.video_key
+  if (body.order_index !== undefined) updates.order_index = body.order_index
+
   const { data, error } = await supabaseAdmin
     .from('lessons')
-    .update(body)
+    .update(updates)
     .eq('id', id)
     .select()
     .single()

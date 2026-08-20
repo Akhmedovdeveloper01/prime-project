@@ -1,8 +1,8 @@
 /**
  * Video uchun signed GET URL beradi.
  * GET /api/video/{lessonId}
- * Header: Authorization: Bearer <supabase-access-token>
- * Foydalanuvchi login + to'lagan (yoki admin) bo'lsa 1 soatlik URL beradi.
+ * Header: Authorization: Bearer <supabase-access-token> (ixtiyoriy — bepul darslar uchun shart emas)
+ * Dars is_free=true bo'lsa hammaga, aks holda faqat login + to'lagan (yoki admin) foydalanuvchiga 1 soatlik URL beradi.
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { GetObjectCommand } from '@aws-sdk/client-s3'
@@ -16,20 +16,23 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { lessonId: string } }
 ) {
-  const user = await requirePaidUser(req)
-  if (!user) {
-    return NextResponse.json({ error: 'Ruxsat yo\'q yoki to\'lov amalga oshirilmagan' }, { status: 403 })
-  }
-
-  // Dars ma'lumotlarini DB dan olamiz (video_key ni bilish uchun)
+  // Dars ma'lumotlarini DB dan olamiz (video_key va is_free ni bilish uchun)
   const { data: lesson, error } = await supabaseAdmin
     .from('lessons')
-    .select('video_key, course_id')
+    .select('video_key, course_id, is_free')
     .eq('id', params.lessonId)
     .single()
 
   if (error || !lesson?.video_key) {
     return NextResponse.json({ error: 'Dars topilmadi yoki video yuklanmagan' }, { status: 404 })
+  }
+
+  // Bepul darslar — login yoki to'lovsiz ham ochiq
+  if (!lesson.is_free) {
+    const user = await requirePaidUser(req)
+    if (!user) {
+      return NextResponse.json({ error: 'Ruxsat yo\'q yoki to\'lov amalga oshirilmagan' }, { status: 403 })
+    }
   }
 
   try {

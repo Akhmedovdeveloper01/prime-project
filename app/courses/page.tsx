@@ -11,13 +11,8 @@ type CourseWithLessons = Course & { lessons: { count: number }[] }
 export default function CoursesPage() {
   const [courses, setCourses] = useState<CourseWithLessons[]>([])
   const [loading, setLoading] = useState(true)
-  const [loggedIn, setLoggedIn] = useState(false)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setLoggedIn(!!session)
-    })
-
     supabase
       .from('courses')
       .select('*, lessons(count)')
@@ -28,8 +23,6 @@ export default function CoursesPage() {
         setLoading(false)
       })
   }, [])
-
-  const startHref = loggedIn ? '/watch' : '/login?redirect=/watch'
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-white">
@@ -113,11 +106,7 @@ export default function CoursesPage() {
                     <div className="flex items-center justify-between">
                       <span className="text-xl font-bold text-white">{price}</span>
                       <Link
-                        href={
-                          loggedIn
-                            ? `/watch?courseId=${course.id}`
-                            : `/login?redirect=${encodeURIComponent(`/watch?courseId=${course.id}`)}`
-                        }
+                        href={`/watch?courseId=${course.id}`}
                         className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium transition-all duration-200 shadow-lg shadow-brand-600/20 hover:shadow-brand-500/30 hover:-translate-y-0.5"
                       >
                         <Play className="w-4 h-4 fill-white" /> Boshlash
