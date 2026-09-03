@@ -19,6 +19,7 @@ import type { Course, Lesson } from '@/lib/supabase'
 import { Modal } from '@/components/ui/Modal'
 import { TableSkeleton } from '@/components/ui/Skeleton'
 import { toast } from '@/components/ui/Toast'
+import { isQuickTimeContainer, QUICKTIME_WARNING } from '@/lib/videoFormat'
 
 /* ── helpers ──────────────────────────────────────────────────────── */
 
@@ -224,6 +225,8 @@ export default function CourseLessonsPage() {
     }))
 
     try {
+      if (await isQuickTimeContainer(file)) throw new Error(QUICKTIME_WARNING)
+
       const token = await getToken()
 
       // 1. Presigned URL olish

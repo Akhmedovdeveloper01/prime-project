@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Upload, CheckCircle2, AlertCircle, Play, RefreshCw } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { isQuickTimeContainer, QUICKTIME_WARNING } from '@/lib/videoFormat'
 
 async function getToken() {
   const { data: { session } } = await supabase.auth.getSession()
@@ -27,6 +28,9 @@ export default function IntroVideoPage() {
   async function handleFile(file: File) {
     if (!file.type.startsWith('video/')) {
       setStatus('error'); setMessage('Faqat video fayl yuklang'); return
+    }
+    if (await isQuickTimeContainer(file)) {
+      setStatus('error'); setMessage(QUICKTIME_WARNING); return
     }
 
     setUploading(true); setProgress(0); setStatus('idle')
